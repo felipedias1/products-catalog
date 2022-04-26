@@ -2,6 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Model } from 'mongoose';
+import {
+  Category,
+  CategoryDocument,
+} from 'src/categories/entities/category.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductDocument } from './entities/product.entity';
@@ -10,9 +14,29 @@ import { Product, ProductDocument } from './entities/product.entity';
 export class ProductsService {
   constructor(
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+    @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
 
-  create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
+    const { nome, categoriaId } = createProductDto;
+    const id = new mongoose.Types.ObjectId(categoriaId);
+    const isRegistered = await this.productModel.findOne({ nome });
+    if (isRegistered) {
+      throw new HttpException(
+        `Product name already exists`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const isCategoryRegistered = await this.categoryModel.find({
+      _id: id,
+    });
+    console.log('>>>>>>', isCategoryRegistered);
+    if (!isCategoryRegistered) {
+      throw new HttpException(
+        `Category does not exists`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const product = new this.productModel(createProductDto);
     return product.save();
   }
