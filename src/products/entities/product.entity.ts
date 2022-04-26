@@ -15,7 +15,7 @@ export class Product {
   ativo: number;
 
   @Prop()
-  categoria_id: number;
+  categoria_id: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
