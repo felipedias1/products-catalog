@@ -30,7 +30,6 @@ export class ProductsService {
     const isCategoryRegistered = await this.categoryModel.find({
       _id: id,
     });
-    console.log('>>>>>>', isCategoryRegistered);
     if (!isCategoryRegistered) {
       throw new HttpException(
         `Category does not exists`,
