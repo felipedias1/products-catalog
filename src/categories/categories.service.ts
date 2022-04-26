@@ -12,7 +12,16 @@ export class CategoriesService {
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto) {
+    const isRegistered = await this.categoryModel.findOne({
+      nome: createCategoryDto.nome,
+    });
+    if (isRegistered) {
+      throw new HttpException(
+        `Category name already exists`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const category = new this.categoryModel(createCategoryDto);
     return category.save();
   }
