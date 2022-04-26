@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -20,12 +21,33 @@ export class ProductsService {
     return this.productModel.find();
   }
 
-  findOne(id: string) {
-    return this.productModel.findById(id);
+  async findOne(id: string) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Product ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const product = await this.productModel.findById({ _id: id });
+    if (!product) {
+      throw new HttpException(
+        `Product ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return product;
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
-    return this.productModel.findByIdAndUpdate(
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Product ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const product = this.productModel.findByIdAndUpdate(
       {
         _id: id,
       },
@@ -36,13 +58,34 @@ export class ProductsService {
         new: true,
       },
     );
+    if (!product) {
+      throw new HttpException(
+        `Product ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return { message: 'Produto Cadastrado com sucesso!' };
   }
 
-  remove(id: string) {
-    return this.productModel
+  async remove(id: string) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Product ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const product = await this.productModel
       .remove({
         _id: id,
       })
       .exec();
+    if (!product) {
+      throw new HttpException(
+        `Product ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return product;
   }
 }
