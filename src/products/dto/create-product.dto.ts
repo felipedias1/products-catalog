@@ -11,5 +11,5 @@ export class CreateProductDto {
   ativo: number;
 
   @IsMongoId()
-  categoria_id: string;
+  categoriaId: string;
 }
