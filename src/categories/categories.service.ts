@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category, CategoryDocument } from './entities/category.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class CategoriesService {
@@ -20,12 +21,33 @@ export class CategoriesService {
     return this.categoryModel.find();
   }
 
-  findOne(id: string) {
-    return this.categoryModel.findById(id);
+  async findOne(id: string) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Category ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const category = await this.categoryModel.findById({ _id: id });
+    if (!category) {
+      throw new HttpException(
+        `Category ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return category;
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryModel.findByIdAndUpdate(
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Category ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const category = await this.categoryModel.findByIdAndUpdate(
       {
         _id: id,
       },
@@ -36,13 +58,32 @@ export class CategoriesService {
         new: true,
       },
     );
+    if (!category) {
+      throw new HttpException(
+        `Category ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  remove(id: string) {
-    return this.categoryModel
+  async remove(id: string) {
+    const ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(id)) {
+      throw new HttpException(
+        `Category ID ${id} is not valid`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const category = await this.categoryModel
       .remove({
         _id: id,
       })
       .exec();
+    if (!category) {
+      throw new HttpException(
+        `Category ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }
