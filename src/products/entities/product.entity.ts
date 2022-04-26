@@ -17,7 +17,7 @@ export class Product {
   ativo: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
-  categoria_id: Category;
+  categoriaId: Category;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
