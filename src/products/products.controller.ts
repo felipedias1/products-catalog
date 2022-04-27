@@ -30,6 +30,11 @@ export class ProductsController {
     return this.productsService.generateCsv();
   }
 
+  @Get('pdf')
+  exportPdf() {
+    return this.productsService.generatePdf();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
