@@ -25,6 +25,11 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
+  @Get('pdf')
+  exportPdf() {
+    return this.categoriesService.generatePdf();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoriesService.findOne(id);
