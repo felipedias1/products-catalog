@@ -97,17 +97,20 @@ export class ProductsService {
         '_id: ' +
           products._id +
           '\n' +
+          'nome: ' +
+          products.nome +
+          '\n' +
           ' quantidade: ' +
           products.quantidade +
           '\n' +
           ' ativo: ' +
           products.ativo +
           '\n' +
-          ' categoriaId: \n' +
+          ' categoriaId: ' +
           products.categoriaId +
           '\n\n\n',
         20,
-        20 + i * 40,
+        20 + i * 45,
       );
     });
     doc.save('products.pdf');
