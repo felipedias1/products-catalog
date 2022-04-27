@@ -25,6 +25,11 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('csv')
+  exportCsv() {
+    return this.productsService.generateCsv();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
