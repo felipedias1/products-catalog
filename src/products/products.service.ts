@@ -11,6 +11,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductDocument } from './entities/product.entity';
 import { json2csv } from 'json-2-csv';
 import * as fs from 'fs';
+import jsPDF from 'jspdf';
 
 @Injectable()
 export class ProductsService {
@@ -85,6 +86,31 @@ export class ProductsService {
         ],
       },
     );
+  }
+
+  async generatePdf() {
+    const products = await this.productModel.find({});
+
+    const doc = new jsPDF();
+    products.forEach(function (products, i) {
+      doc.text(
+        '_id: ' +
+          products._id +
+          '\n' +
+          ' quantidade: ' +
+          products.quantidade +
+          '\n' +
+          ' ativo: ' +
+          products.ativo +
+          '\n' +
+          ' categoriaId: \n' +
+          products.categoriaId +
+          '\n\n\n',
+        20,
+        20 + i * 40,
+      );
+    });
+    doc.save('products.pdf');
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
