@@ -9,6 +9,8 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductDocument } from './entities/product.entity';
+import { json2csv } from 'json-2-csv';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductsService {
@@ -60,6 +62,29 @@ export class ProductsService {
       );
     }
     return product;
+  }
+
+  async generateCsv() {
+    const products = await this.productModel.find({});
+
+    json2csv(
+      products,
+      (err, csv) => {
+        if (err) {
+          throw err;
+        }
+        fs.writeFileSync('products.csv', csv);
+      },
+      {
+        keys: [
+          '_doc._id' as 'id',
+          '_doc.nome' as 'nome',
+          '_doc.quantidade',
+          '_doc.ativo',
+          '_doc.categoriaId',
+        ],
+      },
+    );
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
