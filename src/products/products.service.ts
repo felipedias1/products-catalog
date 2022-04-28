@@ -86,6 +86,7 @@ export class ProductsService {
         ],
       },
     );
+    return { message: 'CSV file exported with sucess' };
   }
 
   async generatePdf() {
@@ -114,6 +115,7 @@ export class ProductsService {
       );
     });
     doc.save('products.pdf');
+    return { message: 'PDF file exported with sucess' };
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
@@ -141,7 +143,6 @@ export class ProductsService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return { message: 'Produto Cadastrado com sucesso!' };
   }
 
   async remove(id: string) {
@@ -163,6 +164,5 @@ export class ProductsService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return product;
   }
 }
